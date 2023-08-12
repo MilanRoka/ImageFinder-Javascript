@@ -1,10 +1,19 @@
 import { FcSearch } from 'react-icons/fc';
 
+
 const Search = () => {
+  const backgroundImageStyle = {
+    backgroundImage: "url('/bg1.jpg')",
+    backgroundPosition: 'center',
+  };
   return (
-    <>
-      <h1 className='font-mono text-4xl text-center mx-auto py-10'>Image Finder</h1>
-      <form className='flex flex-col items-center'>
+    <div>
+      <div className='flex flex-col items-center min-h-full' style={backgroundImageStyle}>
+      <h1 className='text-white font-serif text-4xl text-center mx-auto py-10'>Image search engine<br/>
+      <span className='text-white text-sm italic'>Search and download any images</span>
+
+      </h1>
+      <form className='flex flex-col items-center pb-28'>
         <div className="relative w-96 flex">
           <input
             type="text"
@@ -16,7 +25,8 @@ const Search = () => {
           </button>
         </div>
       </form>
-    </>
+      </div>
+    </div>
   );
 }
 
