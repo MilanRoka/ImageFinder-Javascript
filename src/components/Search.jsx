@@ -1,13 +1,18 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { TbPhotoSearch } from 'react-icons/tb';
+import { FaSearch } from 'react-icons/fa';
 
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [images, setImages] = useState([]);
   const [showLoadMoreButton, setShowLoadMoreButton] = useState(false);
-
   const [currentPage, setCurrentPage] = useState(1);
+  const [modal, setModal] = useState(false);
+  // const [modalImage, setModalImage] = useState(false);
+
+  const toggleModal = () => {
+    setModal(!modal);
+  }
 
   const backgroundImageStyle = {
     backgroundImage: "url('/bg2.jpg')",
@@ -18,12 +23,13 @@ const Search = () => {
     fetchInitialImages();
   }, []);
 
+  // initial images
   const fetchInitialImages = async () => {
     try {
       const response = await axios.get('https://api.unsplash.com/photos', {
         params: {
-          per_page: 10, // Number of initial images
-          client_id: '7Gli5Kqd_xGlW5hWkrt7fzbF9z4UJ6v6TjhcrLYHUVE', 
+          per_page: 30,
+          client_id: '7Gli5Kqd_xGlW5hWkrt7fzbF9z4UJ6v6TjhcrLYHUVE',
         },
       });
       setImages(response.data);
@@ -31,14 +37,14 @@ const Search = () => {
       console.error('Error fetching initial images:', error);
     }
   };
-
+  //images after the search
   const searchImages = async () => {
     try {
       const response = await axios.get('https://api.unsplash.com/search/photos', {
         params: {
           query: searchTerm,
           per_page: 10,
-          client_id: '7Gli5Kqd_xGlW5hWkrt7fzbF9z4UJ6v6TjhcrLYHUVE', 
+          client_id: '7Gli5Kqd_xGlW5hWkrt7fzbF9z4UJ6v6TjhcrLYHUVE',
         },
       });
       setImages(response.data.results);
@@ -48,7 +54,7 @@ const Search = () => {
       console.error('Error fetching images:', error);
     }
   };
-
+  // images for load more button
   const loadMoreImages = async () => {
     try {
       const nextPage = currentPage + 1;
@@ -80,7 +86,7 @@ const Search = () => {
     setShowLoadMoreButton(!showLoadMoreButton);
   };
 
-  
+
   return (
     <div>
       <div className='flex flex-col items-center min-h-full' style={backgroundImageStyle}>
@@ -90,6 +96,7 @@ const Search = () => {
         <form className='flex flex-col items-center pb-28' onSubmit={handleSearch}>
           <div className="relative w-96 flex">
             <input
+              onClick={toggleModal}
               required
               id='search-input'
               type="text"
@@ -99,7 +106,7 @@ const Search = () => {
               placeholder="Search..."
             />
             <button onClick={toggleLoadMoreButton} type="submit" className="w-24 h-10  border border-white rounded-r flex items-center justify-center">
-              <TbPhotoSearch className="text-white w-6 h-6" />
+              <FaSearch className="text-white w-6 h-6" />
             </button>
           </div>
         </form>
@@ -112,14 +119,44 @@ const Search = () => {
             alt={image.alt_description}
             className="m-2 h-80 w-80 object-cover rounded 
             hover:opacity-50 transition ease-in-out duration-150"
-            onClick={
-              () => {
-                window.open(image.urls.regular, '_blank');
-              }
-            }
+            // onClick={
+            //   () => {
+            //     toggleModal();
+            //     setModalImage(image.urls.regular);
+            //   }
+            // }
           />
         ))}
       </div>
+
+      {/* {modal && (
+        <div className={`${modal ? 'flex' : 'hidden'} fixed z-10 inset-0 overflow-y-auto`}>
+          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity" aria-hidden="false">
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div className="mt-2 bg-white
+                rounded-lg
+                text-center overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full
+                sm:p-6
+                " role="dialog" aria-modal="true" aria-labelledby="modal-headline
+            ">
+              <p>
+                <img
+                  src={modalImage}
+                  alt=""
+                  className="w-full h-full object-cover
+                      rounded-lg
+                      shadow-md cursor-pointer"/>
+              </p>
+            </div>
+          </div>
+        </div>
+
+      )
+      } */}
+
       <div className="flex justify-center mt-4">
         {showLoadMoreButton && (
           <button
